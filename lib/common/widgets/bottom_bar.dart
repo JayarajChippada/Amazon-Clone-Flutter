@@ -1,0 +1,101 @@
+import 'package:amazon_clone/constants/global_variable.dart';
+import 'package:amazon_clone/features/account/screens/account_screen.dart';
+import 'package:amazon_clone/features/cart/screens/cart_screen.dart';
+import 'package:amazon_clone/features/home/screens/home_screen.dart';
+import 'package:amazon_clone/providers/user_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:provider/provider.dart';
+
+class MyBottomBar extends StatefulWidget {
+  static const routeName = './actual-home';
+  const MyBottomBar({super.key});
+
+  @override
+  State<MyBottomBar> createState() => _MyBottomBarState();
+}
+
+class _MyBottomBarState extends State<MyBottomBar> {
+  int _page = 0;
+  double bottomBarWidth = 42;
+  double bottomBarBorderWidth = 5;
+
+  List<Widget> pages = [
+    const HomeScreen(),
+    const AccountScreen(),
+    const CartScreen(),
+  ];
+
+  void updatePage(int page) {
+    setState(() {
+      _page = page;
+    });
+  }  
+
+  @override
+  Widget build(BuildContext context) {
+    final userCartLen = context.watch<UserProvider>().user.cart.length;
+    return Scaffold(
+      body: pages[_page],
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: updatePage,
+        currentIndex: _page,
+        selectedItemColor: GlobalVariables.selNavBarColor,
+        unselectedItemColor: GlobalVariables.unselectedNavBarColor,
+        backgroundColor: GlobalVariables.backgroundColor,
+        iconSize: 28,
+        items: [
+          // Home
+          BottomNavigationBarItem(
+              label: '',
+              icon: Container(
+                width: bottomBarWidth,
+                decoration: BoxDecoration(
+                    border: Border(
+                        top: BorderSide(
+                            color: _page == 0
+                                ? GlobalVariables.selNavBarColor
+                                : GlobalVariables.backgroundColor,
+                            width: bottomBarBorderWidth))),
+                child: const Icon(Icons.home_outlined),
+              )),
+
+          // Account
+          BottomNavigationBarItem(
+              label: '',
+              icon: Container(
+                width: bottomBarWidth,
+                decoration: BoxDecoration(
+                    border: Border(
+                        top: BorderSide(
+                            color: _page == 1
+                                ? GlobalVariables.selNavBarColor
+                                : GlobalVariables.backgroundColor,
+                            width: bottomBarBorderWidth))),
+                child: const Icon(Icons.person_outline_outlined),
+              )),
+
+          // Cart
+          BottomNavigationBarItem(
+              label: '',
+              icon: Container(
+                width: bottomBarWidth,
+                decoration: BoxDecoration(
+                    border: Border(
+                        top: BorderSide(
+                            color: _page == 2
+                                ? GlobalVariables.selNavBarColor
+                                : GlobalVariables.backgroundColor,
+                            width: bottomBarBorderWidth))),
+                child:  badges.Badge(
+                  badgeContent: Text(userCartLen.toString()),
+                  badgeStyle:
+                      const badges.BadgeStyle(elevation: 0, badgeColor: Colors.white),
+                  child: const Icon(Icons.shopping_cart_outlined),
+                ),
+              )),
+        ],
+      ),
+    );
+  }
+}
